@@ -1,0 +1,46 @@
+{
+  "groups": {
+    "cdcdedfd-af50-4589-9537-339d43a66f35": {
+      "id": "cdcdedfd-af50-4589-9537-339d43a66f35",
+      "name": "mkp trip",
+      "members": [
+        {
+          "id": "c26366a5-a484-4f43-8eed-07454aa85bd6",
+          "name": "surya",
+          "wallet": "0xb4bd7d410543cb27f42c562ab3ff5dc12fbdd42f"
+        },
+        {
+          "id": "a5a8b460-a8b7-442f-8ec5-c64d8f8c404b",
+          "name": "arjun",
+          "wallet": "0xa7181397cf1731c076439d590f25cd21013af76e"
+        }
+      ],
+      "expenses": [
+        {
+          "id": "f60bdff7-56c3-4caf-93f9-75d8c521062c",
+          "description": "trip",
+          "amount": 1500,
+          "paidBy": "c26366a5-a484-4f43-8eed-07454aa85bd6",
+          "splitBetween": [
+            "c26366a5-a484-4f43-8eed-07454aa85bd6",
+            "a5a8b460-a8b7-442f-8ec5-c64d8f8c404b"
+          ],
+          "createdAt": "2026-08-10T07:15:54.859Z"
+        },
+        {
+          "id": "d560e274-ccbc-4a3e-8df4-45358c4aaf4a",
+          "description": "dinner",
+          "amount": 32,
+          "paidBy": "c26366a5-a484-4f43-8eed-07454aa85bd6",
+          "splitBetween": [
+            "c26366a5-a484-4f43-8eed-07454aa85bd6",
+            "a5a8b460-a8b7-442f-8ec5-c64d8f8c404b"
+          ],
+          "createdAt": "2026-08-10T07:16:32.393Z"
+        }
+      ],
+      "settlements": [],
+      "createdAt": "2026-08-10T07:15:18.105Z"
+    }
+  }
+}
