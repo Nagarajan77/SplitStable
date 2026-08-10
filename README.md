@@ -168,12 +168,76 @@ on-chain transactions your group needs to make. The logic lives in
 
 ---
 
-## 9. Where to go next
+## 9. Deploying on Vercel
 
-- **Persistence:** swap the JSON file for a real database (SQLite/Postgres) once
-  you have more than a handful of groups.
-- **Auth:** right now anyone with the group ID can add expenses — fine for a demo,
-  but you'll want to gate this (e.g. sign-in with wallet signature) for real use.
+This project uses [Vercel Services](https://vercel.com/docs/services) — one Vercel
+project that builds the Vite frontend and the Express backend as two separate
+services, sharing one domain. `vercel.json` at the project root wires it up:
+
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "frontend": { "root": "frontend", "framework": "vite" },
+    "backend": { "root": "backend", "entrypoint": "server.js" }
+  },
+  "rewrites": [
+    { "source": "/api(/.*)?", "destination": { "service": "backend" } },
+    { "source": "/(.*)", "destination": { "service": "frontend" } }
+  ]
+}
+```
+
+Requests to `/api/*` go to the backend service; everything else goes to the
+frontend. The frontend already calls a relative `/api` path in production
+(see `frontend/src/config.js`), so there's nothing to hardcode and no CORS
+to configure — both services share one domain.
+
+> **Node backends need an explicit `entrypoint`.** Vercel auto-detects the
+> framework (it'll say "detected framework: express"), but it still needs to
+> know which file actually calls `.listen()` to start the server — that's
+> `backend/server.js`, so `entrypoint` is set to `"server.js"` (a path
+> relative to that service's `root`). Frontend frameworks like Vite don't
+> need this since their build output is static.
+
+### Steps
+
+1. Push this project to a GitHub repo (with `vercel.json` at the repo root,
+   alongside the `frontend/` and `backend/` folders).
+2. Go to [vercel.com/new](https://vercel.com/new) and import the repo.
+3. In the project's **Build and Deployment settings**, set **Framework Preset**
+   to **Services**. This is required — a `services` key in `vercel.json` only
+   takes effect when the project framework is set to Services.
+4. Deploy. Vercel builds `frontend/` and `backend/` as separate services and
+   serves both from the same URL.
+
+Or from the CLI, run from the project root (the folder containing `vercel.json`):
+
+```bash
+npm install -g vercel
+vercel login
+vercel        # first deploy — follow the prompts, accept the detected settings
+vercel --prod # promote to production once you're happy with the preview
+```
+
+### Before you rely on this in production
+
+- **Storage:** the backend currently persists to a local `db.json` file. That's
+  fine for testing, but a service's filesystem isn't guaranteed to persist
+  across deployments or restarts on Vercel. Swap in a real database (e.g.
+  Postgres via Vercel Postgres/Neon, or Supabase) before using this for real
+  groups.
+- **Arc network:** the frontend still points at Arc **testnet**
+  (`frontend/src/arcConfig.js`). Don't send real funds to it — testnet USDC
+  has no value. Swap in Arc mainnet config only once you're intentionally
+  moving to production funds.
+- **Auth:** as noted above, anyone with a group ID can currently add expenses
+  to it. Fine for a deployed demo you're sharing with friends; not fine for
+  anything you'd trust with strangers.
+
+## 10. Where to go next
+
 - **Multiple currencies:** Arc's App Kits support swaps if you want to let people
   pay in a different token and have it convert automatically.
 - **Notifications:** ping members when a new expense is added or a settlement is due.
+- **Reputation:** track how promptly each member settles up over time.
